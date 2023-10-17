@@ -1,5 +1,6 @@
 import time
 import network
+import ujson as json
 from machine import Pin, Timer
 
 networkPass = 'SevereNutAllergy0926'
@@ -46,3 +47,14 @@ if nic.isconnected():
     print(f'Successfully connected')
     print(f'Network information: {nic.ifconfig()}')
     led_pin.value(1)
+
+# Saving sample data (Times are seconds since epoch, 1970-01-01 00:00 UTC)
+test_data = {}
+for i in range(0, 400):
+    test_data[str(time.gmtime())] = f'Test Point {i+1}'
+    time.sleep(1.1)
+print(f'Test Data: \n{test_data}')
+with open('test_data.json', 'w') as file:
+    print('Writing to file...')
+    json.dump(test_data, file)
+    print('Write successful!')
