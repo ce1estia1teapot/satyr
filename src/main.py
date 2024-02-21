@@ -25,6 +25,7 @@ for i in range(0, 400):
     test_data[str(time.gmtime())] = f'Test Point {i+1}'
     time.sleep(1.1)
 print(f'Test Data: \n{test_data}')
+
 with open('test_data.json', 'w') as file:
     print('Writing to file...')
     json.dump(test_data, file)

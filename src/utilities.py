@@ -41,7 +41,7 @@ def network_scan_for_ssid(p_network=None, p_ssid=None):
         exit
     
 
-def network_connect_by_ssid(p_network=None, p_ssid=None, p_numAttempts=10):
+def network_connect_by_ssid(p_network=None, p_ssid=None, p_pass=None, p_numAttempts=10):
     """
     p_network: a WLAN object from Network library
     p_ssid: A str representing the SSID of the desired network
@@ -49,15 +49,19 @@ def network_connect_by_ssid(p_network=None, p_ssid=None, p_numAttempts=10):
     
     returns:
     """
-    
+    if p_network is None:
+        return None
+    if p_ssid is None:
+        return None
+    if p_pass is None:
+        return None
     
     # Attempting Connection...
     print(f'Connecting to: {good_network[0]}...')
-    nic.connect(ssid=good_network[0], key=networkPass)
+    p_network.connect(ssid=good_network[0], key=networkPass)
     while not nic.isconnected():
         print('...')
         time.sleep(0.3)
-    if nic.isconnected():
+    if p_network.isconnected():
         print(f'Successfully connected')
-        print(f'Network information: {nic.ifconfig()}')
-        led_pin.value(1)
+        print(f'Network information: {p_network.ifconfig()}')
