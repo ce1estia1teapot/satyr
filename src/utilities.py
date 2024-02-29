@@ -22,7 +22,7 @@ def network_scan_for_ssid(p_network=None, p_ssid=None):
     p_network: a WLAN object from Network library. Used for scanning
     p_ssid: str SSID of the desired network
     
-    returns: bool representing whether the provided SSID represents a valid network
+    returns: A network object representing whether the provided SSID represents a valid network
     """
     
     # Scanning for WiFi networks
@@ -31,14 +31,17 @@ def network_scan_for_ssid(p_network=None, p_ssid=None):
         print(f'SSID: {net[0]}')
 
     # Searching scan results for my network
-    good_network: Tuple = None
+    good_network = None
     for temp_net in scan_results:
         ssid, bssid, channel, RSSI, security, hidden = temp_net
         if 'cheese' in str(ssid):
             good_network = temp_net
+            print(f'Network found: {str(good_network[0])}')
     if good_network is None:
         print('Network not found')
         exit
+    else:
+        return good_network
     
 
 def network_connect_by_ssid(p_network=None, p_ssid=None, p_pass=None, p_numAttempts=10):
@@ -47,7 +50,7 @@ def network_connect_by_ssid(p_network=None, p_ssid=None, p_pass=None, p_numAttem
     p_ssid: A str representing the SSID of the desired network
     p_numAttempts: An int number of times to attempt connection before reporting failure
     
-    returns:
+    returns: A bool representing whether the connection was successfully established
     """
     if p_network is None:
         return None
@@ -57,11 +60,14 @@ def network_connect_by_ssid(p_network=None, p_ssid=None, p_pass=None, p_numAttem
         return None
     
     # Attempting Connection...
-    print(f'Connecting to: {good_network[0]}...')
-    p_network.connect(ssid=good_network[0], key=networkPass)
-    while not nic.isconnected():
+    print(f'Connecting to: {p_ssid}...')
+    p_network.connect(ssid=p_ssid, key=p_pass)
+    while not p_network.isconnected():
         print('...')
-        time.sleep(0.3)
+        time.sleep(1.0)
     if p_network.isconnected():
         print(f'Successfully connected')
         print(f'Network information: {p_network.ifconfig()}')
+        return True
+    else:
+        return False
