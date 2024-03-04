@@ -16,7 +16,7 @@ _ENV_SENSE_UUID = bluetooth.UUID(0x181A)
 # org.bluetooth.characteristic.temperature
 _ENV_SENSE_TEMP_UUID = bluetooth.UUID(0x2A6E)
 # org.bluetooth.characteristic.gap.appearance.xml
-_ADV_APPEARANCE_GENERIC_THERMOMETER = const(768)
+_ADV_APPEARANCE_GENERIC_ENV_SENSOR = const(5696)
 
 # Randomly generated UUIDs.
 _FILE_SERVICE_UUID = bluetooth.UUID("0492fcec-7194-11eb-9439-0242ac130002")
@@ -37,6 +37,8 @@ def setup_connection_demo_ble():
 
 
 def setup_ble():
+    print('Setting up BLE...')
+
     # 1. Create ENV_SENSE service
     file_service = aioble.Service(_FILE_SERVICE_UUID)
 
@@ -53,9 +55,10 @@ async def peripheral_task():
     while True:
         async with await aioble.advertise(
             _ADV_INTERVAL_MS,
-            name="mpy-temp",
+            name="Satyr Test",
             services=[_ENV_SENSE_UUID],
-            appearance=_ADV_APPEARANCE_GENERIC_THERMOMETER,
+            appearance=_ADV_APPEARANCE_GENERIC_ENV_SENSOR,
         ) as connection:
             print("Connection from", connection.device)
             await connection.disconnected()
+

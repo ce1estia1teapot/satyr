@@ -5,6 +5,39 @@ import ujson as json
 from machine import Pin, Timer
 from network import WLAN
 
+
+class DeviceSettings:
+    config_fp = ""
+
+    device_name = ""
+    advertising_interval_ms = ""
+    cache_size_bytes = ""
+    last_network_ssid = ""
+    last_network_pass = ""
+
+    def __init__(self, p_config_fp = None):
+        if p_config_fp is not None:
+            self.config_fp = p_config_fp
+            self._initialize_from_file(p_fp=p_config_fp)
+        else:
+            self._initialize_with_defaults()
+
+    def _initialize_from_file(self, p_fp=None):
+        if p_fp is None:
+            return None
+
+    def _initialize_with_defaults(self):
+
+        device_name = "Satyr"
+        advertising_interval_ms = 250000
+        cache_size_bytes = 100000
+
+    def _update_config_file(self):
+        data = {k: v for k, v in self.__dict__}
+        with open(self.config_fp, 'w') as file:
+            json.dump(data, file)
+
+
 def do_startup_blink(p_pin):
     i=0
     p_pin.value(0)

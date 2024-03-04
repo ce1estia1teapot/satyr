@@ -14,11 +14,13 @@ import time
 from machine import Pin, Timer
 from micropython import const
 from utilities import do_startup_blink, network_scan_for_ssid, network_connect_by_ssid
-from src.ble.ble_utilities import setup_connection_demo_ble, peripheral_task
+from ble.ble_utilities import setup_connection_demo_ble, peripheral_task
 
 # Load secrets
 with open("secrets.json", 'r') as file:
     secrets = json.load(file)
+
+# Load
 
 # Defining LED Pin and setting to off
 led_pin = Pin("LED", Pin.OUT)
@@ -40,4 +42,4 @@ if not is_connected_wifi:
 setup_connection_demo_ble()
 
 # 2. Run peripheral task
-peripheral_task()
+asyncio.run(peripheral_task())
