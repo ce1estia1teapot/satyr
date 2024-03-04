@@ -14,6 +14,7 @@ import time
 from machine import Pin, Timer
 from micropython import const
 from utilities import do_startup_blink, network_scan_for_ssid, network_connect_by_ssid
+from src.ble.ble_utilities import setup_connection_demo_ble, peripheral_task
 
 # Load secrets
 with open("secrets.json", 'r') as file:
@@ -34,5 +35,9 @@ if not is_connected_wifi:
     print('Not connected to wifi')
     sys.exit()
 
+# ===== BLUETOOTH SECTION =====
+# 1. Setup BLE
+setup_connection_demo_ble()
 
-
+# 2. Run peripheral task
+peripheral_task()
