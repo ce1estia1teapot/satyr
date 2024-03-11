@@ -1,45 +1,35 @@
+import asyncio
 import sys
+
 sys.path.append("")
 
-import aioble
-import uasyncio as asyncio
-import bluetooth
-import ujson as json
-import mip
-import network
-import random
-import struct
-import time
+from machine import Pin
+from src.utilities import DeviceSettings, do_startup_blink
+from src.ble import file_server_ble_utilities
 
-from machine import Pin, Timer
-from micropython import const
-from utilities import do_startup_blink, network_scan_for_ssid, network_connect_by_ssid
-from ble.ble_utilities import setup_connection_demo_ble, peripheral_task
-
-# Load secrets
-with open("secrets.json", 'r') as file:
-    secrets = json.load(file)
-
-# Load
-
-# Defining LED Pin and setting to off
+# ===== 1. Boot =====
+# Defining LED Pin
 led_pin = Pin("LED", Pin.OUT)
 led_pin.off()
+do_startup_blink(led_pin)
 
-# Defining Network
-nic = network.WLAN(network.STA_IF)
-nic.active(True)
+# Load settings and secrets
+device_settings = DeviceSettings.initialize_from_files(p_config_fp="src/device_settings.json",
+                                                       p_secrets_fp="src/secrets.json")
+file_server_ble_utilities.set_device_settings(p_dev_settings=device_settings)
 
-# Connect to Network and turn on LED if connected
-found_ssid: str = network_scan_for_ssid(nic, 'cheese')[0]
-is_connected_wifi: bool = network_connect_by_ssid(p_network=nic, p_ssid=found_ssid, p_pass=secrets['network_password'])
-if not is_connected_wifi:
-    print('Not connected to wifi')
-    sys.exit()
+# ===== 2. Record a measurement from the sensor =====
+# 2a. Gather measurement
 
-# ===== BLUETOOTH SECTION =====
-# 1. Setup BLE
-setup_connection_demo_ble()
+# 2b. Add to records file
 
-# 2. Run peripheral task
-asyncio.run(peripheral_task())
+# ===== 3. Begin Peripheral Task to Offload and Delete Records =====
+asyncio.gather()
+
+# ===== 4. Update next wake time with specified cadence =====
+
+
+# ===== 5. Check with controller whether there are any updates for code or settings =====
+
+
+# ===== 6. Once operations are complete, return to sleep until next wake =====
