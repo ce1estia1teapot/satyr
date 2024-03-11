@@ -8,6 +8,9 @@ class DeviceSettings:
     settings_fp = ""
 
     device_name = ""
+    device_id = "satyr_test"
+    registered_user_id = "test_user"
+
     advertising_interval_ms = ""
     controller_poll_interval_ms = ""
     sleep_duration_s = ""
@@ -25,6 +28,15 @@ class DeviceSettings:
         for attr in p_settings:
             self.__setattr__(attr, p_settings[attr])
 
+        self._update_config_file()
+
+    def set(self, p_attr_name=None, p_attr_value=None):
+        """
+        This function provides a single entry point into editing device settings that guarantees that
+        the config file is updated with new settings when an attribute is changed
+        """
+
+        self.__setattr__(p_attr_name, p_attr_value)
         self._update_config_file()
 
     @staticmethod
@@ -64,8 +76,11 @@ class DeviceSettings:
         # TODO: Implement _update_config_file for DeviceSettings
         data = self.__dict__
 
-        secrets = {k: v for k, v in data if (k == 'last_network_ssid') or (k == 'last_network_pass')}
-        data = {k: v for k, v in data if not ((k == 'last_network_ssid') or (k == 'last_network_pass'))}
+        secret_params = {'last_network_ssid', 'last_network_pass', "registered_user_id",
+                         "device_id"}
+
+        secrets = {k: v for k, v in data if k in secret_params}
+        data = {k: v for k, v in data if not k in secret_params}
 
         # Write settings
         with open(self.settings_fp, 'w') as file:
@@ -84,3 +99,24 @@ def do_startup_blink(p_pin):
         time.sleep(0.2)
         p_pin.value(0)
         time.sleep(0.2)
+
+
+def format_measurement(p_measurement=None, p_device_settings: DeviceSettings = None, p_creation_time=None):
+    """
+    This function takes in a measurement (int or float) and returns
+    a dictionary containing all parameters required for recording
+    that measurement
+    """
+    if (p_measurement is None) or (p_device_settings is None) or (p_creation_time is None):
+        print(f'Failed to format measurement. One of the arguments was None')
+        return None
+
+    return_dict = {
+        "moisture": p_measurement,
+        "device_name": p_device_settings.device_name,
+        "device_id": p_device_settings.device_id,
+        "registered_user_id": p_device_settings.registered_user_id,
+        "creation_time": p_creation_time
+    }
+
+    return return_dict
